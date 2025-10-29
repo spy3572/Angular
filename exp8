@@ -1,0 +1,74 @@
+app.config.ts
+
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import { provideRouter } from '@angular/router';
+
+import { routes } from './app.routes';
+import { provideHttpClient, withFetch } from '@angular/common/http';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideBrowserGlobalErrorListeners(),
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(routes),
+    provideHttpClient(withFetch())
+  ]
+};
+
+app.ts
+
+import { Component, inject} from '@angular/core';
+// import { FetchData } from './fetch-data';
+import { RouterOutlet } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+@Component({
+  selector: 'app-root',
+  imports: [RouterOutlet],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {
+  http = inject(HttpClient);
+  userList :any[] = [];
+  ngOnInit(): void{
+    // debugger;
+    this.getUsers();
+  }
+  getUsers(){
+    debugger;
+    this.http.get("https://jsonplaceholder.typicode.com/users").subscribe((result: any)=>{
+      // debugger;
+      this.userList = result;
+      console.log(this.userList[0]['id']);
+      debugger;
+    })
+  }
+}
+
+app.html
+
+<div class="row">
+  <div class="col-6">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Username</th>
+          <th>Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of userList; track $index) {
+          <tr>
+            <td>{{item['id']}} </td>
+            <td>{{item['name']}} </td>
+            <td>{{item['username']}} </td>
+            <td>{{item['email']}} </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+aa
